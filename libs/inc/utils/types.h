@@ -1,7 +1,7 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
-#if ARCH == I386
+#if ARCH == i386
 #include <utils/i386/types.h>
 #endif
 
