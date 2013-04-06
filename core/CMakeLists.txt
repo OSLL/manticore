@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project(manticore)
+set(CORE_SOURCES main.cpp)
+add_executable(manticore ${CORE_SOURCES})
+#target_link_libraries(manticore libmanticore)
