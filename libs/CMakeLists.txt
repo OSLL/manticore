@@ -1,1 +1,17 @@
 cmake_minimum_required(VERSION 2.8)
+set(PROCESS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/process)
+set(SERIALIZE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/serialize)
+set(PTRACE_DIR "${PROCESS_DIR}/ptrace/${ARCH}")
+set(PROC_DIR "${PROCESS_DIR}/proc/${ARCH}")
+
+message(STATUS "PROCESS DIR: " ${PROCESS_DIR})
+message(STATUS "SERIALIZE DIR: " ${SERIALIZE_DIR})
+message(STATUS "PTRACE DIR: " ${PTRACE_DIR})
+message(STATUS "PROC DIR: " ${PROC_DIR})
+
+file(GLOB PTRACE_SRC ${PTRACE_DIR}/*.cpp)
+file(GLOB PROC_SRC ${PROC_DIR}/*.cpp)
+set(PROCESS_SRC ${PTRACE_SRC})
+
+set(LIBMANTICORE_SRC ${PROCESS_SRC})
+add_library(libmanticore STATIC ${LIBMANTICORE_SRC})
