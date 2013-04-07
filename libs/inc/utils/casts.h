@@ -4,14 +4,19 @@
 #include <sstream>
 #include <string>
 
-#include "typetraits.h"
+#include <type_traits>
 
 namespace manticore { namespace utils {
 
 namespace detail {
 
-    using manticore::typetraits::true_type;
-    using manticore::typetraits::false_type;
+    typedef char true_type;
+    struct false_type { true_type dummy[2]; };
+
+    template <int value>
+    struct IntToType {
+        enum { Value = value };
+    };
 
     template <typename T, std::string (T::*)()> struct to_string {};
     template <typename T, std::string (T::*)() const> struct const_to_string {};
@@ -36,66 +41,66 @@ namespace detail {
     };
 
     template <typename T>
-    std::string string_cast_impl(T const &obj, manticore::typetraits::IntToType<true> tag) {
+    std::string string_cast_impl(T const &obj, IntToType<true> tag) {
         return obj.ToString();
     }
 
     template <typename T>
-    std::string string_cast_impl(T &obj, manticore::typetraits::IntToType<true> tag) {
+    std::string string_cast_impl(T &obj, IntToType<true> tag) {
         return obj.ToString();
     }
 
     template <typename T>
-    std::string string_cast_impl(T const * const obj, manticore::typetraits::IntToType<true> tag) {
+    std::string string_cast_impl(T const * const obj, IntToType<true> tag) {
         return obj->ToString();
     }
 
     template <typename T>
-    std::string string_cast_impl(T * const obj, manticore::typetraits::IntToType<true> tag) {
+    std::string string_cast_impl(T * const obj, IntToType<true> tag) {
         return obj->ToString();
     }
 
     template <typename T>
-    std::string string_cast_impl(T const &obj, manticore::typetraits::IntToType<false> tag) {
+    std::string string_cast_impl(T const &obj, IntToType<false> tag) {
         std::stringstream buffer;
         buffer << obj;
         return buffer.str();
     }
 
     template <typename T>
-    std::string string_cast_impl(T &obj, manticore::typetraits::IntToType<false> tag) {
+    std::string string_cast_impl(T &obj, IntToType<false> tag) {
         std::stringstream buffer;
         buffer << obj;
         return buffer.str();
     }
 
     template <typename T>
-    int int_cast_impl(T const &obj, manticore::typetraits::IntToType<true> tag) {
+    int int_cast_impl(T const &obj, IntToType<true> tag) {
         return obj.ToInt();
     }
 
     template <typename T>
-    int int_cast_impl(T &obj, manticore::typetraits::IntToType<true> tag) {
+    int int_cast_impl(T &obj, IntToType<true> tag) {
         return obj.ToInt();
     }
 
     template <typename T>
-    int int_cast_impl(T const * const obj, manticore::typetraits::IntToType<true> tag) {
+    int int_cast_impl(T const * const obj, IntToType<true> tag) {
         return obj->ToInt();
     }
 
     template <typename T>
-    int int_cast_impl(T * const obj, manticore::typetraits::IntToType<true> tag) {
+    int int_cast_impl(T * const obj, IntToType<true> tag) {
         return obj->ToInt();
     }
 
     template <typename T>
-    int int_cast_impl(T const &obj, manticore::typetraits::IntToType<false> tag) {
+    int int_cast_impl(T const &obj, IntToType<false> tag) {
         return static_cast<int>(obj);
     }
 
     template <typename T>
-    int int_cast_impl(T &obj, manticore::typetraits::IntToType<false> tag) {
+    int int_cast_impl(T &obj, IntToType<false> tag) {
         return static_cast<int>(obj);
     }
 
@@ -103,42 +108,42 @@ namespace detail {
 
 template <typename T>
 std::string string_cast(T const & obj) {
-    return detail::string_cast_impl<T>(obj, manticore::typetraits::IntToType<detail::ContainsToString<T>::Value>());
+    return detail::string_cast_impl<T>(obj, detail::IntToType<detail::ContainsToString<T>::Value>());
 }
 
 template <typename T>
 std::string string_cast(T & obj) {
-    return detail::string_cast_impl<T>(obj, manticore::typetraits::IntToType<detail::ContainsToString<T>::Value>());
+    return detail::string_cast_impl<T>(obj, detail::IntToType<detail::ContainsToString<T>::Value>());
 }
 
 template <typename T>
 std::string string_cast(T const * const obj) {
-    return detail::string_cast_impl<T>(obj, manticore::typetraits::IntToType<detail::ContainsToString<T>::Value>());
+    return detail::string_cast_impl<T>(obj, detail::IntToType<detail::ContainsToString<T>::Value>());
 }
 
 template <typename T>
 std::string string_cast(T * const obj) {
-    return detail::string_cast_impl<T>(obj, manticore::typetraits::IntToType<detail::ContainsToString<T>::Value>());
+    return detail::string_cast_impl<T>(obj, detail::IntToType<detail::ContainsToString<T>::Value>());
 }
 
 template <typename T>
 int case_cast(T const & obj) {
-    return detail::int_cast_impl<T>(obj, manticore::typetraits::IntToType<detail::ContainsToInt<T>::Value>());
+    return detail::int_cast_impl<T>(obj, detail::IntToType<detail::ContainsToInt<T>::Value>());
 }
 
 template <typename T>
 int case_cast(T & obj) {
-    return detail::int_cast_impl<T>(obj, manticore::typetraits::IntToType<detail::ContainsToInt<T>::Value>());
+    return detail::int_cast_impl<T>(obj, detail::IntToType<detail::ContainsToInt<T>::Value>());
 }
 
 template <typename T>
 int case_cast(T const * const obj) {
-    return detail::int_cast_impl<T>(obj, manticore::typetraits::IntToType<detail::ContainsToInt<T>::Value>());
+    return detail::int_cast_impl<T>(obj, detail::IntToType<detail::ContainsToInt<T>::Value>());
 }
 
 template <typename T>
 int case_cast(T * const obj) {
-    return detail::int_cast_impl<T>(obj, manticore::typetraits::IntToType<detail::ContainsToInt<T>::Value>());
+    return detail::int_cast_impl<T>(obj, detail::IntToType<detail::ContainsToInt<T>::Value>());
 }
 
 } }

@@ -1,7 +1,7 @@
 #include <utils/casts.h>
 #include <sstream>
 
-#define BOOST_TEST_MODULE test_manticore
+#define BOOST_TEST_MODULE test_manticore_casts
 #include <boost/test/unit_test.hpp>
 
 struct casts_test_struct {

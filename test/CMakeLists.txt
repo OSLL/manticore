@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
-set(TEST_SOURCES casts.cpp typetraits.cpp registers.cpp)
-set(TEST test_manticore)
-add_executable(${TEST} ${TEST_SOURCES})
-target_link_libraries(${TEST} ${Boost_LIBRARIES})
-add_test(${TEST} ${TEST})
+
+add_executable(test_casts casts.cpp)
+target_link_libraries(test_casts ${Boost_LIBRARIES})
+
+add_executable(test_registers registers.cpp)
+target_link_libraries(test_registers ${Boost_LIBRARIES})
+
+add_test(test_manticore_casts test_casts)
+add_test(test_manticore_registers test_registers)

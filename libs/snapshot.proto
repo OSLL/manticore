@@ -19,5 +19,5 @@ message Register {
 }
 
 message RegistersSnapshot {
-    repeated Register registers = 1;
+    repeated Register register = 1;
 }

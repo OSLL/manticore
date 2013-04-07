@@ -1,6 +1,7 @@
 #include <process/registers.h>
 #include <utils/types.h>
 
+#define BOOST_TEST_MODULE test_manticore_registers
 #include <boost/test/unit_test.hpp>
 
 #include <algorithm>
