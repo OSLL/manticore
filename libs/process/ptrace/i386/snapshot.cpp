@@ -2,8 +2,8 @@
 
 namespace manticore { namespace ptrace {
 
-std::vector<IRegisterPtr> make_snapshot(user_regs_struct const & regs) {
-    std::vector<IRegisterPtr> registers;
+std::vector<RegisterPtr> make_snapshot(user_regs_struct const & regs) {
+    std::vector<RegisterPtr> registers;
     return registers;
 }
 

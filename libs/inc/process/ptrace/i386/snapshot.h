@@ -11,9 +11,9 @@ extern "C" {
 
 namespace manticore { namespace ptrace {
 
-using manticore::process::IRegisterPtr;
+using manticore::process::RegisterPtr;
 
-std::vector<IRegisterPtr> make_snapshot(user_regs_struct const & regs);
+std::vector<RegisterPtr> make_snapshot(user_regs_struct const & regs);
 
 } }
 

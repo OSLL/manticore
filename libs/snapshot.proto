@@ -1,0 +1,23 @@
+package protobuf;
+
+message Register {
+    required string name = 1;
+    enum Type {
+        INTEGER = 0;
+        FLOATING_POINT = 1;
+    }
+    required Type type = 2;
+    enum Capacity {
+        BIT8 = 8;
+        BIT16 = 16;
+        BIT32 = 32;
+        BIT64 = 64;
+        BIT128 = 128;
+    }
+    required Capacity capacity = 3;
+    required bytes value = 4;
+}
+
+message RegistersSnapshot {
+    repeated Register registers = 1;
+}

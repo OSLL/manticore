@@ -6,12 +6,17 @@
 
 #include <functional>
 #include <algorithm>
+#include <iterator>
 #include <string>
 #include <vector>
+#include <memory>
+
+#include <cassert>
 
 namespace manticore { namespace process {
 
 enum RegisterCapacity {
+    BIT8 = 8,
     BIT16 = 16,
     BIT32 = 32,
     BIT64 = 64,
@@ -23,51 +28,83 @@ enum RegisterType {
     FLOATING_POINT = 1
 };
 
-class IRegister {
-public:
-    virtual ~IRegister() {}
-    virtual RegisterType GetType() const = 0;
-    virtual RegisterCapacity GetCapacity() const = 0;
-    virtual size_t GetSize() const = 0;
-    virtual std::string GetName() const = 0;
-    virtual std::vector<u8> GetValue() const = 0;
-};
-DECLARE_PTRS(IRegister);
-
-template <int BYTES, int TYPE>
-class Register : public IRegister {
+class Register {
 private:
-    enum { SIZE = BYTES, BITS = BYTES * 8 };
+    const std::string name_;
+    const RegisterType type_;
+    const RegisterCapacity capacity_;
 
-    std::string name_;
-    u8 value_[SIZE];
+    std::vector<u8> value_;
 
 public:
-    Register(std::string const &name, const u8 * value) : IRegister(), name_(name) { SetValue(value); }
-    Register(std::string const &name) : IRegister(), name_(name) {}
+    Register(std::string const &name, RegisterType const type, RegisterCapacity const capacity, u8 const * value)
+    : name_(name)
+    , type_(type)
+    , capacity_(capacity)
+    { SetValue(value); }
+
+    Register(std::string const &name, RegisterType const type, std::vector<u8> const & value)
+    : name_(name)
+    , type_(type)
+    , capacity_(static_cast<RegisterCapacity>(value.size() * 8))
+    , value_(value)
+    { }
+
+    Register(std::string const &name, RegisterType const type, RegisterCapacity const capacity)
+    : name_(name)
+    , type_(type)
+    , capacity_(capacity)
+    { }
+
     virtual ~Register() {}
 
-    virtual size_t GetSize() const { return SIZE; }
+    virtual size_t GetSize() const { return capacity_ / 8; }
 
-    virtual RegisterType GetType() const { return static_cast<RegisterType>(SIZE); }
-    virtual RegisterCapacity GetCapacity() const { static_cast<RegisterCapacity>(BITS); }
+    virtual RegisterType GetType() const { return type_; }
+    virtual RegisterCapacity GetCapacity() const { capacity_; }
     virtual std::string GetName() const { return name_; }
+    virtual std::vector<u8> GetValue() const { return value_; }
 
-    virtual std::vector<u8> GetValue() const { return std::vector<u8>(value_, value_ + SIZE); }
-    void SetValue(const u8 * value) { std::copy(value, value + SIZE, value_); }
+    void SetValue(const u8 * value) {
+        value_.clear();
+        std::copy(value, value + GetSize(), std::back_inserter(value_));
+    }
+
+    void SetValue(std::vector<u8> const & value) {
+        assert(value.size() == GetSize());
+        value_.clear();
+        std::copy(value.begin(), value.end(), std::back_inserter(value_));
+    }
 };
+DECLARE_PTRS(Register);
 
-typedef Register<1, INTEGER> I8Register;
-typedef Register<2, INTEGER> I16Register;
-typedef Register<4, INTEGER> I32Register;
-typedef Register<8, INTEGER> I64Register;
-typedef Register<16, INTEGER> I128Register;
+RegisterPtr make_i8_register(std::string const & name) {
+    return std::make_shared<Register>(name, RegisterType::INTEGER, RegisterCapacity::BIT8);
+}
 
-typedef Register<1, FLOATING_POINT> F8Register;
-typedef Register<2, FLOATING_POINT> F16Register;
-typedef Register<4, FLOATING_POINT> F32Register;
-typedef Register<8, FLOATING_POINT> F64Register;
-typedef Register<16, FLOATING_POINT> F128Register;
+RegisterPtr make_i16_register(std::string const & name) {
+    return std::make_shared<Register>(name, RegisterType::INTEGER, RegisterCapacity::BIT16);
+}
+
+RegisterPtr make_i32_register(std::string const & name) {
+    return std::make_shared<Register>(name, RegisterType::INTEGER, RegisterCapacity::BIT32);
+}
+
+RegisterPtr make_i64_register(std::string const & name) {
+    return std::make_shared<Register>(name, RegisterType::INTEGER, RegisterCapacity::BIT64);
+}
+
+RegisterPtr make_i128_register(std::string const & name) {
+    return std::make_shared<Register>(name, RegisterType::INTEGER, RegisterCapacity::BIT128);
+}
+
+RegisterPtr make_f32_register(std::string const & name) {
+    return std::make_shared<Register>(name, RegisterType::FLOATING_POINT, RegisterCapacity::BIT32);
+}
+
+RegisterPtr make_f64_register(std::string const & name) {
+    return std::make_shared<Register>(name, RegisterType::FLOATING_POINT, RegisterCapacity::BIT64);
+}
 
 } }
 

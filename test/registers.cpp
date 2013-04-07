@@ -5,13 +5,15 @@
 
 #include <algorithm>
 
+using namespace manticore::process;
+
 BOOST_AUTO_TEST_CASE(test_one_byte_integer)
 {
     u8 bit1 = 1, bit2 = 2, bit3 = 4, bit4 = 8;
-    manticore::process::I8Register one("bit1", &bit1);
-    manticore::process::I8Register two("bit2", &bit2);
-    manticore::process::I8Register three("bit3", &bit3);
-    manticore::process::I8Register four("bit4", &bit4);
+    Register one("bit1", RegisterType::INTEGER, RegisterCapacity::BIT8, &bit1);
+    Register two("bit2", RegisterType::INTEGER, RegisterCapacity::BIT8, &bit2);
+    Register three("bit3", RegisterType::INTEGER, RegisterCapacity::BIT8, &bit3);
+    Register four("bit4", RegisterType::INTEGER, RegisterCapacity::BIT8, &bit4);
 
     std::vector<u8> one_value(one.GetValue());
     BOOST_CHECK_EQUAL(one.GetName(), "bit1");
@@ -33,10 +35,10 @@ BOOST_AUTO_TEST_CASE(test_one_byte_integer)
 BOOST_AUTO_TEST_CASE(test_two_byte_integer)
 {
     u16 bit1 = 1, bit2 = 2, bit3 = 4, bit4 = 8;
-    manticore::process::I16Register one("bit1", reinterpret_cast<u8*>(&bit1));
-    manticore::process::I16Register two("bit2", reinterpret_cast<u8*>(&bit2));
-    manticore::process::I16Register three("bit3", reinterpret_cast<u8*>(&bit3));
-    manticore::process::I16Register four("bit4", reinterpret_cast<u8*>(&bit4));
+    Register one("bit1", RegisterType::INTEGER, RegisterCapacity::BIT16, reinterpret_cast<u8*>(&bit1));
+    Register two("bit2", RegisterType::INTEGER, RegisterCapacity::BIT16, reinterpret_cast<u8*>(&bit2));
+    Register three("bit3", RegisterType::INTEGER, RegisterCapacity::BIT16, reinterpret_cast<u8*>(&bit3));
+    Register four("bit4", RegisterType::INTEGER, RegisterCapacity::BIT16, reinterpret_cast<u8*>(&bit4));
 
     std::vector<u8> one_value(one.GetValue());
     BOOST_CHECK_EQUAL(one.GetName(), "bit1");
@@ -58,10 +60,10 @@ BOOST_AUTO_TEST_CASE(test_two_byte_integer)
 BOOST_AUTO_TEST_CASE(test_four_byte_integer)
 {
     u32 bit1 = 1, bit2 = 2, bit3 = 4, bit4 = 8;
-    manticore::process::I32Register one("bit1", reinterpret_cast<u8*>(&bit1));
-    manticore::process::I32Register two("bit2", reinterpret_cast<u8*>(&bit2));
-    manticore::process::I32Register three("bit3", reinterpret_cast<u8*>(&bit3));
-    manticore::process::I32Register four("bit4", reinterpret_cast<u8*>(&bit4));
+    Register one("bit1", RegisterType::INTEGER, RegisterCapacity::BIT32, reinterpret_cast<u8*>(&bit1));
+    Register two("bit2", RegisterType::INTEGER, RegisterCapacity::BIT32, reinterpret_cast<u8*>(&bit2));
+    Register three("bit3", RegisterType::INTEGER, RegisterCapacity::BIT32, reinterpret_cast<u8*>(&bit3));
+    Register four("bit4", RegisterType::INTEGER, RegisterCapacity::BIT32, reinterpret_cast<u8*>(&bit4));
 
     std::vector<u8> one_value(one.GetValue());
     BOOST_CHECK_EQUAL(one.GetName(), "bit1");
@@ -83,10 +85,10 @@ BOOST_AUTO_TEST_CASE(test_four_byte_integer)
 BOOST_AUTO_TEST_CASE(test_eight_byte_integer)
 {
     u64 bit1 = 1, bit2 = 2, bit3 = 4, bit4 = 8;
-    manticore::process::I64Register one("bit1", reinterpret_cast<u8*>(&bit1));
-    manticore::process::I64Register two("bit2", reinterpret_cast<u8*>(&bit2));
-    manticore::process::I64Register three("bit3", reinterpret_cast<u8*>(&bit3));
-    manticore::process::I64Register four("bit4", reinterpret_cast<u8*>(&bit4));
+    Register one("bit1", RegisterType::INTEGER, RegisterCapacity::BIT64, reinterpret_cast<u8*>(&bit1));
+    Register two("bit2", RegisterType::INTEGER, RegisterCapacity::BIT64, reinterpret_cast<u8*>(&bit2));
+    Register three("bit3", RegisterType::INTEGER, RegisterCapacity::BIT64, reinterpret_cast<u8*>(&bit3));
+    Register four("bit4", RegisterType::INTEGER, RegisterCapacity::BIT64, reinterpret_cast<u8*>(&bit4));
 
     std::vector<u8> one_value(one.GetValue());
     BOOST_CHECK_EQUAL(one.GetName(), "bit1");
