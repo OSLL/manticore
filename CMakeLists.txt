@@ -1,20 +1,29 @@
+project(manticore CXX)
+
 cmake_minimum_required(VERSION 2.8)
 
-project(build)
-
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-find_package(Protobuf REQUIRED)
-
-set(ARCH i386)
+message(STATUS "Boost Libraries: " ${Boost_LIBRARIES})
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
+
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+message(STATUS "Protobuf Libraries: " ${PROTOBUF_LIBRARIES})
+
+list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Werror -Wall")
+set(ARCH i386)
 ADD_DEFINITIONS(-DARCH=${ARCH})
 
-list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${build_SOURCE_DIR}/libs/inc)
-link_directories(${build_BUILD_DIR}/libs)
-enable_testing()
+set(MANTICORE_BIN ${CMAKE_BINARY_DIR})
+set(MANTICORE_PROTO_GEN ${CMAKE_CURRENT_SOURCE_DIR}/src/lib)
+set(MANTICORE_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/inc)
 
-add_subdirectory(core)
-add_subdirectory(libs)
-add_subdirectory(test)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MANTICORE_BIN}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MANTICORE_BIN}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+include_directories(${MANTICORE_INCLUDE_PATH})
+
+enable_testing()
+add_subdirectory(src)
