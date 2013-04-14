@@ -143,6 +143,14 @@ std::string string_cast(std::shared_ptr<const T> const & obj) {
     return detail::string_cast_impl<T>(obj.get(), detail::IntToType<detail::ContainsToString<T>::Value>());
 }
 
+inline std::string string_cast(char const * const str) {
+    return std::string(str);
+}
+
+inline std::string string_cast(std::string const & str) {
+    return str;
+}
+
 template <typename T>
 int case_cast(T const & obj) {
     return detail::int_cast_impl<T>(obj, detail::IntToType<detail::ContainsToInt<T>::Value>());

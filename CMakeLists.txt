@@ -2,7 +2,7 @@ project(manticore CXX)
 
 cmake_minimum_required(VERSION 2.8)
 
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost COMPONENTS unit_test_framework program_options REQUIRED)
 message(STATUS "Boost Libraries: " ${Boost_LIBRARIES})
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
 
@@ -23,7 +23,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MANTICORE_BIN}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+include_directories(${Boost_INCLUDE_DIR})
 include_directories(${MANTICORE_INCLUDE_PATH})
+include_directories(${PROTOBUF_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 enable_testing()
 add_subdirectory(src)

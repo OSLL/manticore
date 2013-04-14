@@ -6,8 +6,22 @@
 #include <string>
 
 #include <utils/types.h>
+#include <utils/casts.h>
 
 namespace manticore { namespace utils {
+
+namespace detail {
+    template <typename T>
+    void stringify_impl(std::stringstream & stream, T const & arg) {
+        stream << string_cast(arg);
+    }
+
+    template <typename T, typename ... Types>
+    void stringify_impl(std::stringstream & stream, T const & arg, Types const & ... args) {
+        stream << string_cast(arg);
+        stringify_impl(stream, args ...);
+    }
+}
 
 inline std::string from_vector(std::vector<u8> const & data) {
     return std::string((const char *)data.data(), (const char *)(data.data() + data.size()));
@@ -24,6 +38,13 @@ std::string format_hex(Iterator const & begin, Iterator const & end) {
         out << std::hex << static_cast<int>(*it);
     }
     return out.str();
+}
+
+template <typename ... Types>
+std::string stringify(Types const & ... args) {
+    std::stringstream stream;
+    detail::stringify_impl(stream, args ...);
+    return stream.str();
 }
 
 } }

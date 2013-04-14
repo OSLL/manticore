@@ -2,9 +2,6 @@ project(mantibase CXX)
 
 cmake_minimum_required(VERSION 2.8)
 
-include_directories(${PROTOBUF_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 # common variables
 set(MANTICORE_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(MANTICORE_PROTOBUF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/protobuf)
@@ -14,6 +11,10 @@ set(MANTICORE_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(PROCESS_DIR ${MANTICORE_LIBRARY_DIR}/process)
 set(PTRACE_DIR "${PROCESS_DIR}/ptrace")
 set(PROC_DIR "${PROCESS_DIR}/proc")
+
+# core program sources
+file(GLOB MANTICORE_CORE_SRC ${MANTICORE_CORE_DIR}/*.cpp)
+message(STATUS "MANTICORE_CORE_SRC: " ${MANTICORE_CORE_SRC})
 
 # common sources
 file(GLOB MANTICORE_LIB_SRC ${MANTICORE_LIBRARY_DIR}/*.cpp)
@@ -62,9 +63,15 @@ message(STATUS "MANTICORE_LIB_SOURCES: " ${MANTICORE_LIB_SOURCES})
 
 # build main library
 add_library(mantibase STATIC ${MANTICORE_LIB_SOURCES})
-target_link_libraries(mantibase ${Boost_LIBRARIES})
-target_link_libraries(mantibase ${PROTOBUF_LIBRARIES})
+# target_link_libraries(mantibase ${Boost_LIBRARIES})
+# target_link_libraries(mantibase ${PROTOBUF_LIBRARIES})
 add_dependencies(mantibase protogen)
+
+# build main program
+add_executable(manticore ${MANTICORE_CORE_SRC})
+target_link_libraries(manticore mantibase)
+target_link_libraries(manticore ${Boost_LIBRARIES})
+target_link_libraries(manticore ${PROTOBUF_LIBRARIES})
 
 # configure test
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
@@ -83,6 +90,11 @@ target_link_libraries(protobuf_test ${Boost_LIBRARIES})
 target_link_libraries(protobuf_test ${PROTOBUF_LIBRARIES})
 message(STATUS "TEST: protobuf_test")
 
+add_executable(string_utils_test ${MANTICORE_TEST_DIR}/string_utils.cpp)
+target_link_libraries(string_utils_test ${Boost_LIBRARIES})
+message(STATUS "TEST: string_utils_test")
+
 add_test(casts_test ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/casts_test)
 add_test(registers_test ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/registers_test)
 add_test(protobuf_test ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/protobuf_test)
+add_test(string_utils_test ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/string_utils_test)
