@@ -1,4 +1,5 @@
 #include <process/ptrace/ptrace.h>
+#include <process/ptrace/snapshot.h>
 
 #include <sys/wait.h>
 #include <cerrno>
@@ -39,7 +40,13 @@ void Ptrace::Kill(pid_t id) {
 }
 
 bool Ptrace::Exists(pid_t id) {
+    errno = 0;
     return (kill(id, 0) == 0);
+}
+
+std::vector<RegisterPtr> Ptrace::Snapshot(pid_t id) {
+    errno = 0;
+    return Implementation<ISnapshotMaker>()->MakeSnapshot(id);
 }
 
 void Ptrace::Error(pid_t id, int op) {

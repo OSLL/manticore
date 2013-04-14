@@ -36,7 +36,8 @@ public:
 
     virtual void Seize() { session_.reset(new SeizureSession(GetId())); }
     virtual void Release() { session_.reset(); }
-    virtual void Kill() { Release(); Ptrace::Kill(GetId()); };
+    virtual void Kill() { Release(); Ptrace::Kill(GetId()); }
+    virtual std::vector<RegisterPtr> Snapshot() const { return Ptrace::Snapshot(GetId()); }
 
     virtual bool Exists() const { return Ptrace::Exists(GetId()); }
     virtual pid_t GetId() const { return id_; };

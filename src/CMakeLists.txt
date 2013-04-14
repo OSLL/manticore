@@ -30,10 +30,10 @@ file(GLOB PROC_SRC ${PROC_DIR}/*.cpp)
 message(STATUS "PROC_SRC: " ${PROC_SRC})
 
 # arch specific sources
-file(GLOB PTRACE_ARCH_SRC ${PTRACE_DIR}/${ARCH}*.cpp)
+file(GLOB PTRACE_ARCH_SRC ${PTRACE_DIR}/${ARCH}/*.cpp)
 message(STATUS "PTRACE_ARCH_SRC: " ${PTRACE_ARCH_SRC})
 
-file(GLOB PROC_ARCH_SRC ${PROC_DIR}/${ARCH}*.cpp)
+file(GLOB PROC_ARCH_SRC ${PROC_DIR}/${ARCH}/*.cpp)
 message(STATUS "PROC_ARCH_SRC: " ${PROC_ARCH_SRC})
 
 # generate protobuf sources

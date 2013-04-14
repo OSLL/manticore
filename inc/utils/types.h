@@ -7,6 +7,23 @@
 
 #include <memory>
 
+template <typename Interface, typename ... ArgTypes> struct Creator;
+
+#define DECLARE_IMPLEMENTATION(Interface, Implementation)            \
+template <>                                                          \
+struct Creator<Interface> {                                          \
+    template <typename ... ArgTypes>                                 \
+    std::shared_ptr<Interface> Get(ArgTypes const & ... args) const { \
+        return std::make_shared<Implementation>(args ...);           \
+    }                                                                \
+};
+
+
+template <typename Interface, typename ... ArgTypes>
+std::shared_ptr<Interface> Implementation(ArgTypes const & ... args) {
+    return Creator<Interface>().Get(args ...);
+};
+
 #define DECLARE_PTRS(ClassName)                             \
 typedef std::shared_ptr<ClassName> ClassName ## Ptr;        \
 typedef std::weak_ptr<ClassName> ClassName ## WeakPtr;      \

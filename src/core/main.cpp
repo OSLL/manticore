@@ -1,6 +1,7 @@
 #include <boost/program_options.hpp>
 
 #include <iostream>
+#include <vector>
 
 #include <process/process.h>
 
@@ -14,8 +15,12 @@ void pid(pid_t id) {
     try {
         manticore::process::Process process(id);
         process.Seize();
+        std::vector<manticore::process::RegisterPtr> snapshot(process.Snapshot());
         process.Kill();
-        std::cerr << "Process " << id << " successfully killed" << std::endl;
+        std::cout << "Process " << id << " successfully killed, registers snapshot:" << std::endl;
+        for (std::vector<manticore::process::RegisterPtr>::const_iterator it = snapshot.begin(); it != snapshot.end(); ++it) {
+            std::cout << "register: " << manticore::utils::string_cast(*it) << std::endl;
+        }
     } catch (std::exception const & e) {
         std::cerr << "Exception: " << e.what();
     }

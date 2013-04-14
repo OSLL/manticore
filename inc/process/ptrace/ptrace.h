@@ -9,8 +9,10 @@
 #include <unistd.h>
 
 #include <exception>
+#include <vector>
 
 #include <utils/string_utils.h>
+#include <process/registers.h>
 
 namespace manticore { namespace process {
 
@@ -23,8 +25,7 @@ struct Ptrace {
     static void Wait(pid_t id);
     static void Kill(pid_t id);
     static bool Exists(pid_t id);
-
-private:
+    static std::vector<RegisterPtr> Snapshot(pid_t id);
     static void Error(pid_t id, int op);
 };
 
