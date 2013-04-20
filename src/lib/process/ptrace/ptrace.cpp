@@ -44,7 +44,7 @@ bool Ptrace::Exists(pid_t id) {
     return (kill(id, 0) == 0);
 }
 
-std::vector<RegisterPtr> Ptrace::Snapshot(pid_t id) {
+std::vector<RegisterConstPtr> Ptrace::Snapshot(pid_t id) {
     errno = 0;
     return Implementation<ISnapshotMaker>()->MakeSnapshot(id);
 }

@@ -3,8 +3,12 @@
 
 #include <unistd.h>
 
+#include <map>
+
 #include <process/ptrace/ptrace.h>
+#include <process/proc/proc.h>
 #include <utils/types.h>
+#include <utils/range.h>
 
 namespace manticore { namespace process {
 
@@ -37,7 +41,10 @@ public:
     virtual void Seize() { session_.reset(new SeizureSession(GetId())); }
     virtual void Release() { session_.reset(); }
     virtual void Kill() { Release(); Ptrace::Kill(GetId()); }
-    virtual std::vector<RegisterPtr> Snapshot() const { return Ptrace::Snapshot(GetId()); }
+    virtual std::vector<RegisterConstPtr> Snapshot() const { return Ptrace::Snapshot(GetId()); }
+    virtual std::vector<MemoryRegionConstPtr> Regions() const { return Proc::Ranges(GetId()); }
+    virtual void DumpRegion(std::vector<u8> & memory, MemoryRegionConstPtr const & region) const
+    { return Proc::Dump(GetId(), memory, region); }
 
     virtual bool Exists() const { return Ptrace::Exists(GetId()); }
     virtual pid_t GetId() const { return id_; };

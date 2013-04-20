@@ -25,7 +25,7 @@ struct Ptrace {
     static void Wait(pid_t id);
     static void Kill(pid_t id);
     static bool Exists(pid_t id);
-    static std::vector<RegisterPtr> Snapshot(pid_t id);
+    static std::vector<RegisterConstPtr> Snapshot(pid_t id);
     static void Error(pid_t id, int op);
 };
 
@@ -48,35 +48,35 @@ struct PtraceException : public std::exception {
 
 struct ProcessDoesNotExists : public PtraceException {
     ProcessDoesNotExists(pid_t id, int op = Ptrace::UNKNOWN)
-    : PtraceException(id, manticore::utils::stringify("process ", id, " doesn't exists or isn't stopped\n"), op)
+    : PtraceException(id, manticore::utils::stringify("process ", id, " doesn't exists or isn't stopped"), op)
     { }
     virtual ~ProcessDoesNotExists() noexcept { }
 };
 
 struct NotEnoughResources : public PtraceException {
     NotEnoughResources(pid_t id, int op = Ptrace::UNKNOWN)
-    : PtraceException(id, manticore::utils::stringify("not enough resources to ptrace process ", id, "\n"), op)
+    : PtraceException(id, manticore::utils::stringify("not enough resources to ptrace process ", id), op)
     { }
     virtual ~NotEnoughResources() noexcept { }
 };
 
 struct InvalidOptions : public PtraceException {
     InvalidOptions(pid_t id, int op = Ptrace::UNKNOWN)
-    : PtraceException(id, manticore::utils::stringify("invalid options when ptrace process ", id, "\n"), op)
+    : PtraceException(id, manticore::utils::stringify("invalid options when ptrace process ", id), op)
     { }
     virtual ~InvalidOptions() noexcept { }
 };
 
 struct PermissionViolation : public PtraceException {
     PermissionViolation(pid_t id, int op = Ptrace::UNKNOWN)
-    : PtraceException(id, manticore::utils::stringify("permission violation when ptrace process ", id, "\n"), op)
+    : PtraceException(id, manticore::utils::stringify("permission violation when ptrace process ", id), op)
     { }
     virtual ~PermissionViolation() noexcept { }
 };
 
 struct ProcessAlreadyTerminated : public PtraceException {
     ProcessAlreadyTerminated(pid_t id)
-    : PtraceException(id, manticore::utils::stringify("process ", id, " terminated\n"), Ptrace::WAIT)
+    : PtraceException(id, manticore::utils::stringify("process ", id, " terminated"), Ptrace::WAIT)
     { }
     virtual ~ProcessAlreadyTerminated() noexcept {}
 };

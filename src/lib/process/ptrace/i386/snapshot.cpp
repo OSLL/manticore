@@ -17,7 +17,7 @@ namespace manticore { namespace process {
 
 #define PUSHREG(reg, type, cap)                        \
 registers.push_back(                                   \
-    std::make_shared<Register>(                        \
+    std::make_shared<const Register>(                  \
         #reg,                                          \
         RegisterType::type,                            \
         RegisterCapacity::cap,                         \
@@ -25,7 +25,7 @@ registers.push_back(                                   \
     )                                                  \
 )
 
-std::vector<RegisterPtr> I386SnapshotMaker::MakeSnapshot(pid_t id) const {
+std::vector<RegisterConstPtr> I386SnapshotMaker::MakeSnapshot(pid_t id) const {
     user_regs_struct general;
     memset(reinterpret_cast<void *>(&general), 0, sizeof(general));
 
@@ -36,7 +36,7 @@ std::vector<RegisterPtr> I386SnapshotMaker::MakeSnapshot(pid_t id) const {
     if (ptrace(static_cast<__ptrace_request>(PTRACE_GETREGSET), id, NT_PRSTATUS, &iov) == -1) {
          Ptrace::Error(id, static_cast<int>(PTRACE_GETREGSET));
     }
-    std::vector<RegisterPtr> registers;
+    std::vector<RegisterConstPtr> registers;
     PUSHREG(ebx, INTEGER, BIT32);
     PUSHREG(ecx, INTEGER, BIT32);
     PUSHREG(edx, INTEGER, BIT32);

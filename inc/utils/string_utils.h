@@ -40,6 +40,21 @@ std::string format_hex(Iterator const & begin, Iterator const & end) {
     return out.str();
 }
 
+template <typename Number>
+std::string format_hex(Number const & number) {
+    std::ostringstream out;
+    out << std::hex << number;
+    return out.str();
+}
+
+template <typename Type>
+Type parse(std::string const & str) {
+    std::stringstream stream;
+    Type value;
+    stream << str; stream >> value;
+    return value;
+}
+
 template <typename ... Types>
 std::string stringify(Types const & ... args) {
     std::stringstream stream;

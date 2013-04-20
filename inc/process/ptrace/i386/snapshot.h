@@ -13,7 +13,7 @@ public:
     I386SnapshotMaker() { }
     virtual ~I386SnapshotMaker() { }
 
-    virtual std::vector<RegisterPtr> MakeSnapshot(pid_t pid) const;
+    virtual std::vector<RegisterConstPtr> MakeSnapshot(pid_t pid) const;
 };
 DECLARE_PTRS(I386SnapshotMaker);
 

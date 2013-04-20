@@ -24,9 +24,10 @@ std::shared_ptr<Interface> Implementation(ArgTypes const & ... args) {
     return Creator<Interface>().Get(args ...);
 };
 
-#define DECLARE_PTRS(ClassName)                             \
-typedef std::shared_ptr<ClassName> ClassName ## Ptr;        \
-typedef std::weak_ptr<ClassName> ClassName ## WeakPtr;      \
+#define DECLARE_PTRS(ClassName)                                  \
+typedef std::shared_ptr<ClassName> ClassName ## Ptr;             \
+typedef std::shared_ptr<const ClassName> ClassName ## ConstPtr;  \
+typedef std::weak_ptr<ClassName> ClassName ## WeakPtr;           \
 typedef std::unique_ptr<ClassName> ClassName ## UniquePtr
 
 #endif /*__TYPES_H__*/

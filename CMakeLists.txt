@@ -2,7 +2,7 @@ project(manticore CXX)
 
 cmake_minimum_required(VERSION 2.8)
 
-find_package(Boost COMPONENTS unit_test_framework program_options REQUIRED)
+find_package(Boost COMPONENTS unit_test_framework program_options regex REQUIRED)
 message(STATUS "Boost Libraries: " ${Boost_LIBRARIES})
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
 

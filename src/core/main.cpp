@@ -15,14 +15,21 @@ void pid(pid_t id) {
     try {
         manticore::process::Process process(id);
         process.Seize();
-        std::vector<manticore::process::RegisterPtr> snapshot(process.Snapshot());
-        process.Kill();
-        std::cout << "Process " << id << " successfully killed, registers snapshot:" << std::endl;
-        for (std::vector<manticore::process::RegisterPtr>::const_iterator it = snapshot.begin(); it != snapshot.end(); ++it) {
+
+        std::vector<manticore::process::RegisterConstPtr> snapshot(process.Snapshot());
+        std::cout << "Process " << id << " registers snapshot:" << std::endl;
+        for (std::vector<manticore::process::RegisterConstPtr>::const_iterator it = snapshot.begin(); it != snapshot.end(); ++it) {
             std::cout << "register: " << manticore::utils::string_cast(*it) << std::endl;
         }
+
+        std::vector<manticore::process::MemoryRegionConstPtr> regions(process.Regions());
+        for (std::vector<manticore::process::MemoryRegionConstPtr>::const_iterator it = regions.begin(); it != regions.end(); ++it) {
+            std::cout << "region: " << manticore::utils::string_cast(*it) << std::endl;
+        }
+
+        process.Kill();
     } catch (std::exception const & e) {
-        std::cerr << "Exception: " << e.what();
+        std::cerr << "Exception: " << e.what() << std::endl;
     }
 }
 

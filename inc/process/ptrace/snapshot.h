@@ -12,7 +12,7 @@ struct ISnapshotMaker {
     ISnapshotMaker() { }
     virtual ~ISnapshotMaker() { }
 
-    virtual std::vector<RegisterPtr> MakeSnapshot(pid_t pid) const = 0;
+    virtual std::vector<RegisterConstPtr> MakeSnapshot(pid_t pid) const = 0;
 };
 DECLARE_PTRS(ISnapshotMaker);
 
