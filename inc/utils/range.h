@@ -7,30 +7,7 @@
 
 namespace manticore { namespace utils {
 
-template <typename LessType>
-struct EqualFromLess : public std::binary_function<typename LessType::first_argument_type,
-                                                   typename LessType::second_argument_type,
-                                                   typename LessType::result_type> {
-
-    typedef std::binary_function<typename LessType::first_argument_type,
-                                 typename LessType::second_argument_type,
-                                 typename LessType::result_type> BaseType;
-
-    typedef typename BaseType::first_argument_type LeftType;
-    typedef typename BaseType::second_argument_type RightType;
-    typedef typename BaseType::result_type ResultType;
-
-    EqualFromLess(LessType const & less) : less_(less) { }
-    EqualFromLess() { }
-
-    ResultType operator () (LeftType const & left, RightType const & right) const
-    { return !less_(left, right) && !less_(right, left); }
-
-private:
-    LessType less_;
-};
-
-template <typename ValueType_ = size_t, typename DifferenceType_ = ValueType_, typename LessType = std::less<ValueType_> >
+template <typename ValueType_ = size_t, typename DifferenceType_ = ValueType_>
 class Range {
 public:
     typedef ValueType_ ValueType;
@@ -48,20 +25,9 @@ public:
     ValueType GetUpper() const
     { return upper_; }
 
-    bool ContainsStrict(ValueType const & value) const
-    { return less_(value, upper_) && less_(lower_, value); }
-
-    bool ContainsNotStrict(ValueType const & value) const
-    { return ContainsStrinct(value) || equal_(lower_, value) || equal_(upper_, value); }
-
 private:
-    typedef EqualFromLess<LessType> EqualType;
-
     ValueType lower_;
     ValueType upper_;
-
-    LessType less_;
-    EqualType equal_;
 };
 
 } }

@@ -37,8 +37,8 @@ file(GLOB PROC_ARCH_SRC ${PROC_DIR}/${ARCH}/*.cpp)
 message(STATUS "PROC_ARCH_SRC: " ${PROC_ARCH_SRC})
 
 # generate protobuf sources
-set(PROTO_SRC ${MANTICORE_LIBRARY_DIR}/snapshot.pb.cc)
-set(PROTO_HDR ${MANTICORE_LIBRARY_DIR}/snapshot.pb.h)
+set(PROTO_SRC ${MANTICORE_LIBRARY_DIR}/snapshot.pb.cc ${MANTICORE_LIBRARY_DIR}/memory.pb.cc)
+set(PROTO_HDR ${MANTICORE_LIBRARY_DIR}/snapshot.pb.h ${MANTICORE_LIBRARY_DIR}/memory.pb.h)
 list(APPEND PROTO_FILES_ALL ${PROTO_HDR})
 list(APPEND PROTO_FILES_ALL ${PROTO_SRC})
 add_custom_target(protogen)
@@ -46,6 +46,11 @@ add_custom_command(
 	TARGET protogen
 	COMMAND protoc
 	ARGS -I=${MANTICORE_PROTOBUF_DIR} --cpp_out=${MANTICORE_LIBRARY_DIR} ${MANTICORE_PROTOBUF_DIR}/snapshot.proto
+)
+add_custom_command(
+	TARGET protogen
+	COMMAND protoc
+	ARGS -I=${MANTICORE_PROTOBUF_DIR} --cpp_out=${MANTICORE_LIBRARY_DIR} ${MANTICORE_PROTOBUF_DIR}/memory.proto
 )
 message(STATUS "GENERATED SOURCES: " ${PROTO_FILES_ALL})
 set_source_files_properties(${PROTO_FILES_ALL} PROPERTIES GENERATED TRUE)

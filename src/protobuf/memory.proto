@@ -1,0 +1,18 @@
+package protobuf;
+
+message MemoryRegion {
+    required uint64 lower = 1;
+    required uint64 upper = 2;
+    required string path = 3;
+
+    required bool readable = 4;
+    required bool writable = 5;
+    required bool executable = 6;
+    required bool shared = 7;
+
+    required bytes memory = 8;
+}
+
+message MemoryRegions {
+    repeated MemoryRegion region = 1;
+}

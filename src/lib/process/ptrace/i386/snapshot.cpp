@@ -21,7 +21,7 @@ registers.push_back(                                   \
         #reg,                                          \
         RegisterType::type,                            \
         RegisterCapacity::cap,                         \
-        reinterpret_cast<u8 const *>(&general.reg)     \
+        reinterpret_cast<char const *>(&general.reg)   \
     )                                                  \
 )
 

@@ -24,7 +24,7 @@ void pid(pid_t id) {
 
         std::vector<manticore::process::MemoryRegionConstPtr> regions(process.Regions());
         for (std::vector<manticore::process::MemoryRegionConstPtr>::const_iterator it = regions.begin(); it != regions.end(); ++it) {
-            std::cout << "region: " << manticore::utils::string_cast(*it) << std::endl;
+            std::cout << "region: " << manticore::utils::string_cast(*it) << ", size = 0x" << std::hex << (*it)->GetMemory()->size() << std::endl;
         }
 
         process.Kill();

@@ -23,12 +23,12 @@ namespace detail {
     }
 }
 
-inline std::string from_vector(std::vector<u8> const & data) {
-    return std::string((const char *)data.data(), (const char *)(data.data() + data.size()));
+inline std::string from_vector(std::vector<char> const & data) {
+    return std::string(data.data(), data.data() + data.size());
 }
 
-inline std::vector<u8> from_string(std::string const & data) {
-    return std::vector<u8>((const u8 *)data.data(), (const u8 *)(data.data() + data.size()));
+inline std::vector<char> from_string(std::string const & data) {
+    return std::vector<char>(data.data(), data.data() + data.size());
 }
 
 template <typename Iterator>

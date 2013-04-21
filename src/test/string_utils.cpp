@@ -23,14 +23,14 @@ BOOST_AUTO_TEST_CASE(test_to_hex)
 BOOST_AUTO_TEST_CASE(test_string_vector)
 {
     std::string str("value");
-    std::vector<u8> vec(manticore::utils::from_string(str));
+    std::vector<char> vec(manticore::utils::from_string(str));
     BOOST_CHECK_EQUAL(str.size(), vec.size());
     BOOST_CHECK(std::equal(str.data(), str.data() + str.size(), vec.begin()));
 }
 
 BOOST_AUTO_TEST_CASE(test_vector_string)
 {
-    std::vector<u8> vec = { 'v', 'a', 'l', 'u', 'e' };
+    std::vector<char> vec = { 'v', 'a', 'l', 'u', 'e' };
     std::string str(manticore::utils::from_vector(vec));
     BOOST_CHECK_EQUAL(str.size(), vec.size());
     BOOST_CHECK(std::equal(str.data(), str.data() + str.size(), vec.begin()));

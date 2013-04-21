@@ -2,3 +2,7 @@
 *.swp
 *.swo
 *.o
+src/lib/memory.pb.cc
+src/lib/memory.pb.h
+src/lib/snapshot.pb.cc
+src/lib/snapshot.pb.h
