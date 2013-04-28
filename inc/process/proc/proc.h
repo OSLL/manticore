@@ -27,7 +27,7 @@ struct UnexpectedProcFormatException : public std::exception {
 
 struct Proc {
     static std::vector<MemoryRegionConstPtr> Ranges(pid_t id);
-    static void Load(pid_t id, MemoryRegionPtr const & region);
+    static std::shared_ptr<std::vector<char> > Load(pid_t id, MemoryRegionConstPtr const & region);
 };
 
 } }

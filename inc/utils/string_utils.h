@@ -2,6 +2,7 @@
 #define __STRING_UTILS_H__
 
 #include <sstream>
+#include <iomanip>
 #include <vector>
 #include <string>
 
@@ -35,7 +36,7 @@ template <typename Iterator>
 std::string format_hex(Iterator const & begin, Iterator const & end) {
     std::ostringstream out;
     for (Iterator it = begin; it != end; ++it) {
-        out << std::hex << static_cast<int>(*it);
+        out << std::setw(2 * sizeof(*it)) << std::setfill('0') << std::hex << static_cast<u64>(*reinterpret_cast<u8 const * const>(&(*it)));
     }
     return out.str();
 }
@@ -43,7 +44,7 @@ std::string format_hex(Iterator const & begin, Iterator const & end) {
 template <typename Number>
 std::string format_hex(Number const & number) {
     std::ostringstream out;
-    out << std::hex << number;
+    out << std::setw(2 * sizeof(number)) << std::setfill('0') << std::hex << number;
     return out.str();
 }
 

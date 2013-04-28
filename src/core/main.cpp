@@ -1,60 +1,107 @@
 #include <boost/program_options.hpp>
 
+#include <algorithm>
 #include <iostream>
+#include <iomanip>
+#include <fstream>
 #include <vector>
+#include <memory>
 
+#include <process/serialize.h>
 #include <process/process.h>
 
-namespace bpo = boost::program_options;
+namespace {
 
-void help(bpo::options_description const & description) {
-    std::cout << description << std::endl;
-}
+    using namespace manticore::serialize;
+    using namespace manticore::process;
+    namespace bpo = boost::program_options;
 
-void pid(pid_t id) {
-    try {
-        manticore::process::Process process(id);
-        process.Seize();
-
-        std::vector<manticore::process::RegisterConstPtr> snapshot(process.Snapshot());
-        std::cout << "Process " << id << " registers snapshot:" << std::endl;
-        for (std::vector<manticore::process::RegisterConstPtr>::const_iterator it = snapshot.begin(); it != snapshot.end(); ++it) {
-            std::cout << "register: " << manticore::utils::string_cast(*it) << std::endl;
-        }
-
-        std::vector<manticore::process::MemoryRegionConstPtr> regions(process.Regions());
-        for (std::vector<manticore::process::MemoryRegionConstPtr>::const_iterator it = regions.begin(); it != regions.end(); ++it) {
-            std::cout << "region: " << manticore::utils::string_cast(*it) << ", size = 0x" << std::hex << (*it)->GetMemory()->size() << std::endl;
-        }
-
-        process.Kill();
-    } catch (std::exception const & e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
+    void print_register(RegisterConstPtr const & reg) {
+        std::cout << "register: " << manticore::utils::string_cast(reg) << std::endl;
     }
-}
 
-void main_impl(int argc, char **argv) {
-    bpo::options_description description("Options");
-    description.add_options()
-        ("help", "print help")
-        ("pid", bpo::value<pid_t>(), "target process id")
-    ;
+    void print_mem_descriptor(MemoryRegionConstPtr const & mem) {
+        std::cout << "region: " << manticore::utils::string_cast(mem) << std::endl;
+    }
 
-    bpo::variables_map variables;
-    bpo::store(bpo::parse_command_line(argc, argv, description), variables);
-    bpo::notify(variables);
+    void help(bpo::options_description const & description) {
+        std::cout << description << std::endl;
+    }
 
-    if (variables.count("help")) {
+    void pid(pid_t id) {
+        try {
+            Process process(id);
+            process.Seize();
+
+            std::vector<RegisterConstPtr> snapshot(process.Snapshot());
+            std::vector<MemoryRegionConstPtr> regions(process.Regions());
+
+            // dump registers
+            std::fstream regs("registers.img", std::ios::binary | std::ios::out);
+            regs << snapshot; regs.close();
+
+            // dump regions
+            std::fstream mem_desc("memory.img", std::ios::binary | std::ios::out);
+            mem_desc << regions; mem_desc.close();
+
+            size_t loa = 0, hia = 0;
+            for (std::vector<MemoryRegionConstPtr>::const_iterator it = regions.begin(); it != regions.end(); ++it) {
+                if (loa == 0 || loa > (*it)->GetLower()) {
+                    loa = (*it)->GetLower();
+                }
+                if (hia < (*it)->GetUpper()) {
+                    hia = (*it)->GetUpper();
+                }
+                std::fstream mem( manticore::utils::stringify("0x", manticore::utils::format_hex((*it)->GetLower()), "-",
+                                                              "0x", manticore::utils::format_hex((*it)->GetUpper()), ".img"),
+                                  std::ios::binary | std::ios::out );
+                std::shared_ptr<std::vector<char> > memory = process.Load(*it);
+                std::copy(memory->begin(), memory->end(), std::ostream_iterator<char>(mem));
+                mem.close();
+            }
+
+            // verbose output
+            std::cout << "Process " << id << " registers snapshot:" << std::endl;
+            std::for_each(snapshot.begin(), snapshot.end(), &print_register);
+
+            std::cout << std::endl << "Process " << id << " memory regions:" << std::endl;
+            std::for_each(regions.begin(), regions.end(), &print_mem_descriptor);
+
+            std::cout << "Process " << id << " common memory info:" << std::endl
+                      << "\t" << "lower address = 0x" << std::hex << loa << std::endl
+                      << "\t" << "upper address = 0x" << std::hex << hia << std::endl
+                      << "\t" << "address space size = 0x" << std::hex << hia - loa << std::endl;
+
+            process.Kill();
+        } catch (std::exception const & e) {
+            std::cerr << "Exception: " << e.what() << std::endl;
+        }
+    }
+
+    void main_impl(int argc, char **argv) {
+        bpo::options_description description("Options");
+        description.add_options()
+            ("help", "print help")
+            ("pid", bpo::value<pid_t>(), "target process id")
+        ;
+
+        bpo::variables_map variables;
+        bpo::store(bpo::parse_command_line(argc, argv, description), variables);
+        bpo::notify(variables);
+
+        if (variables.count("help")) {
+            help(description);
+            return;
+        }
+
+        if (variables.count("pid")) {
+            pid(variables["pid"].as<pid_t>());
+            return;
+        }
+
         help(description);
-        return;
     }
 
-    if (variables.count("pid")) {
-        pid(variables["pid"].as<pid_t>());
-        return;
-    }
-
-    help(description);
 }
 
 int main(int argc, char **argv) {

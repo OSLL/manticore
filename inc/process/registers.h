@@ -68,7 +68,7 @@ public:
     virtual std::vector<char> const & GetValue() const { return value_; }
 
     void SetValue(const char * value) {
-        value_.clear();
+        std::vector<char>().swap(value_);
         std::copy(value, value + GetSize(), std::back_inserter(value_));
     }
 
@@ -82,7 +82,8 @@ public:
         return utils::stringify("{name:", GetName(),
                                 ";type:", (GetType() == RegisterType::INTEGER ? "integer" : "false"),
                                 ";capacity:", GetCapacity(),
-                                ";value:", utils::format_hex(value_.begin(), value_.end()), "}");
+                                // little-endian is more wide spread byteorder
+                                ";value:0x", utils::format_hex(value_.rbegin(), value_.rend()), "}");
     }
 };
 DECLARE_PTRS(Register);

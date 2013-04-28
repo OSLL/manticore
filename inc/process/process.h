@@ -24,7 +24,6 @@ private:
         }
         ~SeizureSession() {
             try {
-                //Ptrace::Kill(id);
                 Ptrace::Detach(GetId());
             } catch (std::exception const & e) {}
         }
@@ -43,6 +42,7 @@ public:
     virtual void Kill() { Release(); Ptrace::Kill(GetId()); }
     virtual std::vector<RegisterConstPtr> Snapshot() const { return Ptrace::Snapshot(GetId()); }
     virtual std::vector<MemoryRegionConstPtr> Regions() const { return Proc::Ranges(GetId()); }
+    virtual std::shared_ptr<std::vector<char> > Load(MemoryRegionConstPtr const & desc) const { return Proc::Load(GetId(), desc); }
 
     virtual bool Exists() const { return Ptrace::Exists(GetId()); }
     virtual pid_t GetId() const { return id_; };

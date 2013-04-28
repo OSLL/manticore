@@ -57,6 +57,6 @@ std::vector<RegisterConstPtr> I386SnapshotMaker::MakeSnapshot(pid_t id) const {
     return registers;
 }
 
-#undef GETREG
+#undef PUSHREG
 
 } }

@@ -9,8 +9,6 @@ message MemoryRegion {
     required bool writable = 5;
     required bool executable = 6;
     required bool shared = 7;
-
-    required bytes memory = 8;
 }
 
 message MemoryRegions {

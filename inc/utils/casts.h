@@ -68,14 +68,7 @@ namespace detail {
     }
 
     template <typename T>
-    std::string string_cast_impl(T const &obj, IntToType<false> tag) {
-        std::stringstream buffer;
-        buffer << obj;
-        return buffer.str();
-    }
-
-    template <typename T>
-    std::string string_cast_impl(T &obj, IntToType<false> tag) {
+    std::string string_cast_impl(T obj, IntToType<false> tag) {
         std::stringstream buffer;
         buffer << obj;
         return buffer.str();

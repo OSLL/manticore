@@ -58,21 +58,26 @@ std::vector<MemoryRegionConstPtr> Proc::Ranges(pid_t id) {
         std::string line;
         std::getline(maps, line);
         if (!line.empty()) {
-            MemoryRegionPtr region = detail::ParseRegion(line); Load(id, region);
-            regions.push_back(region);
+            MemoryRegionPtr region = detail::ParseRegion(line);
+            /* put this check somewhere else */
+            if (region->GetPath() != "[vdso]") {
+                regions.push_back(region);
+            }
         }
     }
+    maps.close();
 
     return regions;
 }
 
-void Proc::Load(pid_t id, MemoryRegionPtr const & region) {
+std::shared_ptr<std::vector<char> > Proc::Load(pid_t id, MemoryRegionConstPtr const & region) {
     std::string name(utils::stringify("/proc/", id, "/mem"));
     std::ifstream mem(name.c_str(), std::ifstream::binary);
     mem.seekg(region->GetLower(), std::ifstream::beg);
     std::shared_ptr<std::vector<char> > memory(new std::vector<char>(region->GetRange().GetSize()));
     mem.read(&(*memory)[0], region->GetRange().GetSize());
-    region->SetMemory(memory);
+    mem.close();
+    return memory;
 }
 
 } }

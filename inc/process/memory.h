@@ -40,10 +40,6 @@ public:
     bool IsExecutable() const { return GetPermission() & static_cast<u8>(PermissionFlag::Execute); }
     bool IsPrivate() const { return GetPermission() & static_cast<u8>(PermissionFlag::Private); }
 
-    std::shared_ptr<const std::vector<char> > GetMemory() const { return memory_; }
-    void SetMemory(std::shared_ptr<const std::vector<char> > memory) { memory_ = memory; }
-    void ResetMemory() { memory_.reset(); }
-
     std::string ToString() const {
         return utils::stringify("{path:", GetPath(),
                                 ";permissions:", (IsReadable() ? 'r' : '-'),
@@ -51,15 +47,14 @@ public:
                                                  (IsExecutable() ? 'x' : '-'),
                                                  (IsPrivate() ? 'p' : '-'),
                                 ";range:{lower:0x", utils::format_hex(GetLower()),
-                                       ";upper:0x", utils::format_hex(GetUpper()), 
+                                       ";upper:0x", utils::format_hex(GetUpper()),
+                                       ";size:0x" , utils::format_hex(GetRange().GetSize()),
                                 "}}");
     }
 private:
     MemoryRange range_;
     u8 permission_;
     std::string path_;
-
-    std::shared_ptr<const std::vector<char> > memory_;
 };
 DECLARE_PTRS(MemoryRegion);
 

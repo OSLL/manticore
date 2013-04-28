@@ -31,7 +31,6 @@ namespace detail {
         buff.set_writable(region->IsWritable());
         buff.set_executable(region->IsExecutable());
         buff.set_shared(!region->IsPrivate());
-        buff.set_memory(manticore::utils::from_vector(*region->GetMemory()));
     }
 
     void fill_region(MemoryRegionConstPtr & reg, protobuf::MemoryRegion const & buff) {
@@ -57,7 +56,6 @@ namespace detail {
         } else {
             r->DropPermissionFlag(MemoryRegion::PermissionFlag::Private);
         }
-        r->SetMemory(std::make_shared<const std::vector<char> >(buff.memory().begin(), buff.memory().end()));
         reg = r;
     }
 

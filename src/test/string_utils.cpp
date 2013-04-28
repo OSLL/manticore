@@ -11,15 +11,6 @@ BOOST_AUTO_TEST_CASE(test_stringify)
     BOOST_CHECK_EQUAL(test, manticore::utils::stringify("process ", pid, " doesn't exists or isn't stopped"));
 }
 
-BOOST_AUTO_TEST_CASE(test_to_hex)
-{
-    u8 value = 255;
-    std::string converted(manticore::utils::format_hex(&value, &value + 1));
-    std::ostringstream stream;
-    stream << std::hex << static_cast<int>(value);
-    BOOST_CHECK_EQUAL(converted, stream.str());
-}
-
 BOOST_AUTO_TEST_CASE(test_string_vector)
 {
     std::string str("value");
