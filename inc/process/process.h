@@ -1,6 +1,8 @@
 #ifndef __PROCESS_H__
 #define __PROCESS_H__
 
+#include <boost/utility.hpp>
+
 #include <unistd.h>
 
 #include <map>
@@ -12,7 +14,7 @@
 
 namespace manticore { namespace process {
 
-class Process {
+class Process : boost::noncopyable {
 private:
     struct SeizureSession {
         pid_t id_;

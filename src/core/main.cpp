@@ -1,4 +1,5 @@
 #include <boost/program_options.hpp>
+#include <boost/bind.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -24,6 +25,15 @@ namespace {
         std::cout << "region: " << manticore::utils::string_cast(mem) << std::endl;
     }
 
+    void dump_memory_region(Process const & process, MemoryRegionConstPtr const & desc) {
+        std::fstream file( manticore::utils::stringify("0x", manticore::utils::format_hex(desc->GetLower()), "-",
+                                                       "0x", manticore::utils::format_hex(desc->GetUpper()), ".img"),
+                           std::ios::binary | std::ios::out );
+        std::shared_ptr<std::vector<char> > memory = process.Load(desc);
+        std::copy(memory->begin(), memory->end(), std::ostream_iterator<char>(file));
+        file.close();
+    }
+
     void help(bpo::options_description const & description) {
         std::cout << description << std::endl;
     }
@@ -40,25 +50,12 @@ namespace {
             std::fstream regs("registers.img", std::ios::binary | std::ios::out);
             regs << snapshot; regs.close();
 
-            // dump regions
+            // dump memory descriptors
             std::fstream mem_desc("memory.img", std::ios::binary | std::ios::out);
             mem_desc << regions; mem_desc.close();
 
-            size_t loa = 0, hia = 0;
-            for (std::vector<MemoryRegionConstPtr>::const_iterator it = regions.begin(); it != regions.end(); ++it) {
-                if (loa == 0 || loa > (*it)->GetLower()) {
-                    loa = (*it)->GetLower();
-                }
-                if (hia < (*it)->GetUpper()) {
-                    hia = (*it)->GetUpper();
-                }
-                std::fstream mem( manticore::utils::stringify("0x", manticore::utils::format_hex((*it)->GetLower()), "-",
-                                                              "0x", manticore::utils::format_hex((*it)->GetUpper()), ".img"),
-                                  std::ios::binary | std::ios::out );
-                std::shared_ptr<std::vector<char> > memory = process.Load(*it);
-                std::copy(memory->begin(), memory->end(), std::ostream_iterator<char>(mem));
-                mem.close();
-            }
+            // dump memory
+            std::for_each(regions.begin(), regions.end(), boost::bind(&dump_memory_region, boost::cref(process), _1));
 
             // verbose output
             std::cout << "Process " << id << " registers snapshot:" << std::endl;
@@ -66,11 +63,6 @@ namespace {
 
             std::cout << std::endl << "Process " << id << " memory regions:" << std::endl;
             std::for_each(regions.begin(), regions.end(), &print_mem_descriptor);
-
-            std::cout << "Process " << id << " common memory info:" << std::endl
-                      << "\t" << "lower address = 0x" << std::hex << loa << std::endl
-                      << "\t" << "upper address = 0x" << std::hex << hia << std::endl
-                      << "\t" << "address space size = 0x" << std::hex << hia - loa << std::endl;
 
             process.Kill();
         } catch (std::exception const & e) {

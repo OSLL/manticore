@@ -58,11 +58,7 @@ std::vector<MemoryRegionConstPtr> Proc::Ranges(pid_t id) {
         std::string line;
         std::getline(maps, line);
         if (!line.empty()) {
-            MemoryRegionPtr region = detail::ParseRegion(line);
-            /* put this check somewhere else */
-            if (region->GetPath() != "[vdso]") {
-                regions.push_back(region);
-            }
+            regions.push_back(detail::ParseRegion(line));
         }
     }
     maps.close();
