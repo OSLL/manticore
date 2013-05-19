@@ -8,6 +8,7 @@
 #include <map>
 
 #include <process/ptrace/ptrace.h>
+#include <process/ptrace/snapshot.h>
 #include <process/proc/proc.h>
 #include <utils/types.h>
 #include <utils/range.h>
@@ -37,19 +38,17 @@ private:
     SeizureSessionUniquePtr session_;
 public:
     Process(pid_t id) : id_(id), session_(nullptr) { }
-    virtual ~Process() { }
 
-    virtual void Seize() { session_.reset(new SeizureSession(GetId())); }
-    virtual void Release() { session_.reset(); }
-    virtual void Kill() { Release(); Ptrace::Kill(GetId()); }
-    virtual std::vector<RegisterConstPtr> Snapshot() const { return Ptrace::Snapshot(GetId()); }
-    virtual std::vector<MemoryRegionConstPtr> Regions() const { return Proc::Ranges(GetId()); }
-    virtual std::shared_ptr<std::vector<char> > Load(MemoryRegionConstPtr const & desc) const { return Proc::Load(GetId(), desc); }
+    void Seize() { session_.reset(new SeizureSession(GetId())); }
+    void Release() { session_.reset(); }
+    void Kill() { Release(); Ptrace::Kill(GetId()); }
+    std::vector<RegisterConstPtr> Snapshot() const { return Implementation<ISnapshotMaker>()->MakeSnapshot(GetId()); }
+    std::vector<MemoryRegionConstPtr> Regions() const { return Proc::Ranges(GetId()); }
+    std::shared_ptr<std::vector<char> > Load(MemoryRegionConstPtr const & desc) const { return Proc::Load(GetId(), desc); }
 
-    virtual bool Exists() const { return Ptrace::Exists(GetId()); }
-    virtual pid_t GetId() const { return id_; };
+    bool Exists() const { return Ptrace::Exists(GetId()); }
+    pid_t GetId() const { return id_; };
 };
-DECLARE_PTRS(Process);
 
 } }
 

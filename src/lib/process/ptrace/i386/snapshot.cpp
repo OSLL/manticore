@@ -26,6 +26,8 @@ registers.push_back(                                   \
 )
 
 std::vector<RegisterConstPtr> I386SnapshotMaker::MakeSnapshot(pid_t id) const {
+    errno = 0;
+
     user_regs_struct general;
     memset(reinterpret_cast<void *>(&general), 0, sizeof(general));
 

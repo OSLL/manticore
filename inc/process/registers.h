@@ -58,14 +58,12 @@ public:
     , capacity_(capacity)
     { }
 
-    virtual ~Register() {}
+    size_t GetSize() const { return capacity_ / 8; }
 
-    virtual size_t GetSize() const { return capacity_ / 8; }
-
-    virtual RegisterType GetType() const { return type_; }
-    virtual RegisterCapacity GetCapacity() const { return capacity_; }
-    virtual std::string GetName() const { return name_; }
-    virtual std::vector<char> const & GetValue() const { return value_; }
+    RegisterType GetType() const { return type_; }
+    RegisterCapacity GetCapacity() const { return capacity_; }
+    std::string GetName() const { return name_; }
+    std::vector<char> const & GetValue() const { return value_; }
 
     void SetValue(const char * value) {
         std::vector<char>().swap(value_);
